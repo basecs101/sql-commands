@@ -138,7 +138,8 @@ SET CUSTOMERNAME="MAHESH KESKAR"
 WHERE CUSTOMERID IN (106,103,102,104);
 
 SELECT * FROM CUSTOMERS WHERE COUNTRY NOT IN ("INDIA", "USA");
-
+UPDATE customers SET CustomerName="test" WHERE CustomerID=1;
+SELECT * FROM customers;
 SELECT * FROM CUSTOMERS WHERE CustomerID BETWEEN 103 AND 105;
 
 SELECT * FROM CUSTOMERS WHERE CustomerID=103 OR CustomerID=105;
@@ -462,7 +463,7 @@ CREATE TABLE PRODUCT
 (ProductID	INT NOT NULL,
 ProductName	VARCHAR(100),
 SupplierID INT,
-CategoryID	INT,
+CategoryIDPRIMARYPRIMARY	INT,
 Unit INT,
 Price INT,
 PRIMARY KEY (ProductID),
@@ -476,6 +477,123 @@ insert INTO PRODUCT
 (ProductID,ProductName,SupplierID,CategoryID,Unit,Price)
 VALUES(1, "MILK",5000,103,10,50);
 */
-select * from product;
+select sum(CustomerID) from customers;
+select count(CustomerID) from customers;
+select max(CustomerID) from customers;
+select min(CustomerID) from customers;
+select avg(CustomerID) as avg_valueorders_ibfk_1 from customers;
+
+drop table persons;
+
+CREATE TABLE Persons (
+    ID int NOT NULL, -- column1
+    LastName varchar(255) NOT NULL, -- column2
+    FirstName varchar(255), -- column3
+    Age int, -- column4PRIMARY
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName) -- This the primary key (PK_Person) of the table 
+);
+
+-- Primary key is a key that is Unique and not null
+-- Primary key can be created using one column or combination of multuple columns.
+-- Primary key guarantees that unique records are inserted into the table for PK
+
+insert into persons (id, lastname, firstname, age) values(1, "Gupta", "Vikram", 28);
+insert into persons (id, lastname, firstname, age) values(2, "Suryawanshi", "Bhagyashree", 26);
+insert into persons (id, lastname, firstname, age) values(3, "Bankar", "Komal", 25);
+insert into persons (id, lastname, firstname, age) values(4, "Powar", "Pratik", 22);
+insert into persons (id, lastname, firstname, age) values(5, "Gupta", "Vikas", 32);
+insert into persons (id, lastname, firstname, age) values(5, "Gupta", "Vivek", 24);
 
 
+
+CREATE TABLE Persons1 (
+    ID int PRIMARY KEY, -- column1
+    LastName varchar(255) NOT NULL, -- column2
+    FirstName varchar(255), -- column3
+    Age int -- column4PRIMARY
+);
+
+SELECT * FROM persons1;
+
+CREATE TABLE Role (
+    ID int PRIMARY KEY, -- column1
+    RoleName varchar(255) NOT NULL, -- column2
+    PersonID int, -- column3
+	FOREIGN KEY (PersonID) references Persons1(ID)
+);
+
+-- Alter TABLE Role
+-- Add COLUMN LastName varchar(255)
+
+-- create index ln
+-- on Role(LastName);
+
+-- ALTER TABLE Role 
+-- Add FOREIGN KEY (LastName) references Persons1(LastName);
+
+insert into persons1 (id, lastname, firstname, age) values(1, "Gupta", "Vikram", 28);
+insert into persons1 (id, lastname, firstname, age) values(2, "Suryawanshi", "Bhagyashree", 26);
+insert into persons1 (id, lastname, firstname, age) values(3, "Bankar", "Komal", 25);
+insert into persons1 (id, lastname, firstname, age) values(4, "Powar", "Pratik", 22);
+insert into persons1 (id, lastname, firstname, age) values(5, "Gupta", "Vikas", 32);
+
+SELECT * FROM persons1 WHERE ID=3;
+
+
+insert into role (id, rolename, personid) values (1,"HR", 4);
+
+SELECT * FROM role;
+
+insert into role (id, rolename, personid) values (2,"EM", 3);
+
+select * from customers;
+
+
+
+-- ################ INDEX ###############
+-- The `CREATE INDEX` statement is used to create indexes in tables. Indexes are used to retrieve data from the database more quickly than otherwise.
+-- The users cannot see the indexes, they are just used to speed up searches/queries.
+-- Note: Updating a table with indexes takes more time than updating a table without (because the indexes also need an update). So, only create indexes on columns that will be frequently searched against.
+-- Cluster index and non cluster index
+-- One cluster index per table eg, PK, records are physically ordered based on clustered index
+-- One or more than one non cluster index per table, records are physically ordered based on non clustered index
+
+-- example cluster index
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    Username VARCHAR(50),
+    Email VARCHAR(100)
+);
+
+INSERT INTO Users (UserID, Username, Email) values (101, "basecs", "basecs101@gmail.com");
+INSERT INTO Users (UserID, Username, Email) values (103, "pratik", "pratik@gmail.com");
+INSERT INTO Users (UserID, Username, Email) values (102, "komal", "komal@gmail.com");
+INSERT INTO Users (UserID, Username, Email) values (104, "arti", "arti@gmail.com");
+
+SELECT * FROM users; 
+
+CREATE TABLE Departments (
+    DepartmentID INT,
+    DepartmentName VARCHAR(100),
+    Size INT,
+    CONSTRAINT PK_DepartmentID PRIMARY KEY NONCLUSTERED (DepartmentID)
+);
+
+ALTER TABLE Departments
+DROP COLUMN DepartmentID;
+
+INSERT INTO departments (departmentID, DepartmentName, Size) VALUE (1, "CSE",20);
+INSERT INTO departments (departmentID, DepartmentName, Size) VALUE (4, "ME",15);
+INSERT INTO departments (departmentID, DepartmentName, Size) VALUE (3, "EC",30);
+INSERT INTO departments (departmentID, DepartmentName, Size) VALUE (2, "CHEM",10);
+
+SELECT * FROM departments;
+
+CREATE INDEX IX_Size ON departments (size);
+
+-- Non cluster indexes are stored outside table in the form of btree nodes.
+-- Each node of index in BTREE [column_value , addr_of_row]
+-- [20, 2000h]
+-- [10, 3000h]
+-- [30, 4000h]
+-- [15, 5000h]
